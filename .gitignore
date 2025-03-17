@@ -1,0 +1,8 @@
+# Visual Studio and .NET Core
+bin/
+obj/
+*.user
+*.suo
+.vs/
+plot.png
+.DS_Store

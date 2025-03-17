@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "simply-supported-beam-edu", "simply-supported-beam-edu.csproj", "{36FE6014-6E60-5A9D-661A-6BB7F2B0387F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36FE6014-6E60-5A9D-661A-6BB7F2B0387F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36FE6014-6E60-5A9D-661A-6BB7F2B0387F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36FE6014-6E60-5A9D-661A-6BB7F2B0387F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36FE6014-6E60-5A9D-661A-6BB7F2B0387F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {004D966C-FCEA-4BA1-98D5-59E221993922}
+	EndGlobalSection
+EndGlobal
