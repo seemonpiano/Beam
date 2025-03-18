@@ -8,3 +8,5 @@ Il Solver non è stato modificato.
 
 
 Il Plotter è stato modificato, in modo tale da conformarlo alla scelta di una sola origine per entrambi i tratti.
+
+L'esempio riportato nel main rappresenta una trave iperstatica con un incastro nell'estremo sinistro, una cerniera nel nodo in posizione 0.5, e una coppia applicata nell'estremo destro.
