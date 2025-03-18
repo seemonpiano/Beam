@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 class Program
@@ -13,12 +13,13 @@ class Program
 
         double length = 10;              // beam length
 
-        NonExtSupportType support_type = NonExtSupportType.Roller;
-        double ratio = 0.75;             // roller position ratio
+        //NonExtSupportType support_type = NonExtSupportType.Roller;
+        double ratio = 0.5;             // roller position ratio
         double zF_s0 = ratio * length;   // roller position
         
         double zF_s1 = length - zF_s0;          // force position
         double force = 8E2;
+        double moment = 5E2;
 
         double[] absolutePositions = new double[] {0, zF_s0, length}; // absolute position for the mathematical segment splitting
 
@@ -31,14 +32,14 @@ class Program
 
         double[,] Matrix = new double[dimMat, dimMat];
 
-        NonExtSupportType roller = NonExtSupportType.Roller;
-        ExtSupportType hinge = ExtSupportType.Hinge;
-        LoadType load = LoadType.Force;
+        NonExtSupportType non_ext_support = NonExtSupportType.Hinge;
+        ExtSupportType ext_support = ExtSupportType.Fixed;
+        LoadType load = LoadType.Moment;
 
 
-        List<List<double>> abs_conditions = roller.get_absolute_beam_equations(zF_s0, E, I, A);
-        List<List<double>> rel_conditions = roller.get_relative_beam_equations(zF_s0, E, I, A);
-        List<List<double>> ext_conditions = hinge.get_extreme_beam_equations(0,E,I,A);
+        List<List<double>> abs_conditions = non_ext_support.get_absolute_beam_equations(zF_s0, E, I, A);
+        List<List<double>> rel_conditions = non_ext_support.get_relative_beam_equations(zF_s0, E, I, A);
+        List<List<double>> ext_conditions = ext_support.get_extreme_beam_equations(0,E,I,A);
         List<List<double>> load_conditions = load.get_extreme_load_equations(length,E,I,A);
 
         double[] vector = load.get_vector(force/(E*I));
@@ -77,7 +78,7 @@ class Program
         
         for(int i=0; i<rel_conditions.Count; i++){
             for(int j=0; j<rel_conditions[i].Count;j++){
-                Matrix[i+offset, j] = rel_conditions[i][j];
+                Matrix[i+offset, j] = (-1)*rel_conditions[i][j];
                 Matrix[i+offset, j+6] = rel_conditions[i][j]; 
             }
         }
@@ -104,53 +105,53 @@ class Program
             Console.Write($"{row1[i]} "); // Use scientific notation for clarity
         }  */
         
-    //     // v(0) = 0
-    //     double[] row1 = { 0, 0, 0, 1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0 };
-    //     // w(0) = 0
-    //     double[] row2 = {0, 0, 0, 0, 0, -1/(E*A), 0, 0, 0, 0, 0, 0 };
-    //     // M(0) = 0
-    //     double[] row3 = { 0, 1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    //     // v(zF_s0) = 0
-    //     double[] row4 = { 1/(E*I)*Math.Pow(zF_s0,3)/6,  1/(E*I)*Math.Pow(zF_s0,2)/2, 1/(E*I)*zF_s0,  1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0 };
-    //     // Delta_w() = w_s1(0) - w_s0(zF_s0) = 0
-    //     double[] row5 = { 0, 0, 0, 0, -(-1/(E*A)) *zF_s0,  -(-1/(E*A)), 0, 0, 0, 0, 0, -1/(E*A) };
-    //     // Delta_phi() = phi_s1(0) - phi_s0(zF_s0) = 0 //erano sbagliati i segni
-    //     double[] row6 = { (1/(E*I))*Math.Pow(zF_s0,2)/2, (1/(E*I))*zF_s0, (1/(E*I)), 0, 0, 0, 0, 0,  -1/(E*I), 0, 0, 0 };
-    //     // Delta_v() = v_s1(0) - v_s0(zF_s0) = 0
-    //     double[] row7 = {(1/(E*I))*Math.Pow(zF_s0,3)/6, (1/(E*I))*Math.Pow(zF_s0,2)/2, (1/(E*I))*zF_s0, (1/(E*I)), 0, 0, 0, 0, 0,  -1/(E*I), 0, 0 };
-    //     // Delta_M() = M_s1(0) - M_s0(zF_s0) = 0
-    //     double[] row8 = { -(-zF_s0), -(-1), 0, 0, 0, 0, 0, -1, 0, 0, 0, 0 };
-    //     // Delta_N() = N_s1(0) - N_s0(zF_s0) = 0
-    //     double[] row9 = { 0, 0, 0, 0, -(-1), 0, 0, 0, 0, 0, -1, 0 };
-    //     // M(zF_s1) = 0
-    //     double[] row10 = {0, 0, 0, 0, 0, 0, -zF_s1, -1, 0, 0, 0, 0 };
-    //     // T(zF_s1) = F //NON CI VUOLE UN EI???
-    //     double[] row11 = {0, 0, 0, 0, 0, 0, -(1/(E*I)), 0, 0, 0, 0, 0 };
-    //     // N(zF_s1) = 0
-    //     double[] row12 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0 };
+   /*      // v(0) = 0
+        double[] row1 = { 0, 0, 0, 1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0 };
+        // w(0) = 0
+        double[] row2 = {0, 0, 0, 0, 0, -1/(E*A), 0, 0, 0, 0, 0, 0 };
+        // M(0) = 0
+        double[] row3 = { 0, 1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        // v(zF_s0) = 0
+        double[] row4 = { 1/(E*I)*Math.Pow(zF_s0,3)/6,  1/(E*I)*Math.Pow(zF_s0,2)/2, 1/(E*I)*zF_s0,  1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0 };
+        // Delta_w() = w_s1(0) - w_s0(zF_s0) = 0
+        double[] row5 = { 0, 0, 0, 0, -(-1/(E*A)) *zF_s0,  -(-1/(E*A)), 0, 0, 0, 0, 0, -1/(E*A) };
+        // Delta_phi() = phi_s1(0) - phi_s0(zF_s0) = 0 //erano sbagliati i segni
+        double[] row6 = { (1/(E*I))*Math.Pow(zF_s0,2)/2, (1/(E*I))*zF_s0, (1/(E*I)), 0, 0, 0, 0, 0,  -1/(E*I), 0, 0, 0 };
+        // Delta_v() = v_s1(0) - v_s0(zF_s0) = 0
+        double[] row7 = {(1/(E*I))*Math.Pow(zF_s0,3)/6, (1/(E*I))*Math.Pow(zF_s0,2)/2, (1/(E*I))*zF_s0, (1/(E*I)), 0, 0, 0, 0, 0,  -1/(E*I), 0, 0 };
+        // Delta_M() = M_s1(0) - M_s0(zF_s0) = 0
+        double[] row8 = { -(-zF_s0), -(-1), 0, 0, 0, 0, 0, -1, 0, 0, 0, 0 };
+        // Delta_N() = N_s1(0) - N_s0(zF_s0) = 0
+        double[] row9 = { 0, 0, 0, 0, -(-1), 0, 0, 0, 0, 0, -1, 0 };
+        // M(zF_s1) = 0
+        double[] row10 = {0, 0, 0, 0, 0, 0, -zF_s1, -1, 0, 0, 0, 0 };
+        // T(zF_s1) = F //NON CI VUOLE UN EI???
+        double[] row11 = {0, 0, 0, 0, 0, 0, -(1/(E*I)), 0, 0, 0, 0, 0 };
+        // N(zF_s1) = 0
+        double[] row12 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0 };
 
-    //     // Set rows collection for the matrix
-    //     List<double[]> rows = new List<double[]>
-    //     {
-    //         row1, row2, row3, row4, row5, row6, row7, row8, row9, row10, row11, row12
-    //     };
+        // Set rows collection for the matrix
+        List<double[]> rows = new List<double[]>
+        {
+            row1, row2, row3, row4, row5, row6, row7, row8, row9, row10, row11, row12
+        };
 
-    //     // define the vector
-    //     double[] vector = new double[]
-    //     {
-    //        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, force, 0
-    //     };
+        // define the vector
+        double[] vector = new double[]
+        {
+           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, force, 0
+        };
 
         
-    //     // reshape the matrix from [][] to [,]
-    //     double[,] matrix = new double[numRows, numCols];
-    //     for (int i = 0; i < rows.Count; i++)
-    //     {
-    //         for (int j = 0; j < rows[i].Length; j++)
-    //         {
-    //             matrix[i, j] = rows[i][j];
-    //         }
-    //     }
+        // reshape the matrix from [][] to [,]
+        double[,] matrix = new double[numRows, numCols];
+        for (int i = 0; i < rows.Count; i++)
+        {
+            for (int j = 0; j < rows[i].Length; j++)
+            {
+                matrix[i, j] = rows[i][j];
+            }
+        } */
         
 
         double[] solution = MatrixSolver.Solve(Matrix, vector);      // solve Ax = b
@@ -346,8 +347,8 @@ public static double[] get_vector(this LoadType load_type, double load) {
 
     return load_type switch{
         
-        LoadType.Force => [0, 0, 0, 0 ,load ,0, 0, 0, 0, 0, 0, 0],
-        LoadType.Moment => [0, 0, 0, load, 0 ,0, 0, 0, 0, 0, 0, 0],
+        LoadType.Force => [0, 0, 0, 0 ,-load ,0, 0, 0, 0, 0, 0, 0],
+        LoadType.Moment => [0, 0, 0, -load, 0 ,0, 0, 0, 0, 0, 0, 0],
         _ =>[0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0]
     };
 }
@@ -432,7 +433,7 @@ public static double[] get_vector(this LoadType load_type, double load) {
                 },
             NonExtSupportType.Hinge => new List<BeamEquationType> {
                 BeamEquationType.V,
-                BeamEquationType.VIII,
+                BeamEquationType.VI,
                 BeamEquationType.VII,
                 BeamEquationType.W,
                 },
