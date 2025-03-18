@@ -16,8 +16,7 @@ class Program
         double zF_s0 = ratio * length;   // roller position
         
         double zF_s1 = length - zF_s0;          // force position
-        double force = 8E2;
-        double moment = 5E2;
+        double ext_load = 8E2;
 
         double[] absolutePositions = new double[] {0, zF_s0, length}; // absolute position for the mathematical segment splitting
     
@@ -36,7 +35,7 @@ class Program
         List<List<double>> ext_conditions = ext_support.get_extreme_beam_equations(0,E,I,A);
         List<List<double>> load_conditions = load.get_extreme_load_equations(length,E,I,A);
 
-        double[] vector = load.get_vector(force/(E*I));
+        double[] vector = load.get_vector(ext_load/(E*I));
 
         int offset = 0;
         //Console.WriteLine(offset);
