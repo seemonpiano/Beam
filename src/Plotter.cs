@@ -208,8 +208,9 @@ public class PlotHelper
             for (int i = 0; i < nPoints; i++)
             {
                 dataX[i] = i * dx; // x values
-                dataY[i] = computeY(dataX[i], group); // use the provided computation logic
                 dataX[i] += group.ZStart; // translate x values with respect to each segment
+                dataY[i] = computeY(dataX[i], group); // use the provided computation logic
+                
                 // apply computeX if provided
                 if (computeX != null)
                 {
