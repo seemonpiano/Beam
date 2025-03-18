@@ -7,4 +7,4 @@ La costruzione della matrice si basa, per motivi pratici di costruzione, sull'in
 Il Solver non è stato modificato.
 
 
-Il Plotter è da aggiornare, in modo tale da conformarlo alla scelta di una sola origine per entrambi i tratti.
+Il Plotter è stato modificato, in modo tale da conformarlo alla scelta di una sola origine per entrambi i tratti.
