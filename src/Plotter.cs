@@ -68,7 +68,7 @@ public class PlotHelper
     {
         
         ScottPlot.Multiplot multiplot = new(); // start a new multiplot
-        double dx = 0.1; // resolution of the plot
+        double dx = 0.001; // resolution of the plot
         
         ScottPlot.Plot displacement  = PlotDisplacement( groups, dx); // prepare the displacement plot
         ScottPlot.Plot N  = PlotN( groups, dx); // prepare the axial force plot
@@ -243,8 +243,8 @@ public class PlotHelper
             min_yAxis = Math.Min(min_yAxis, minY);
         }
         // increase the max and min values for the axes to have a better visualization
-        min_yAxis = 1.05*min_yAxis;
-        max_yAxis = 1.05*max_yAxis;
+        min_yAxis = 1.15*min_yAxis;
+        max_yAxis = 1.15*max_yAxis;
         
         // customize axes
         plot.Axes.Right.FrameLineStyle.Width = 0;
