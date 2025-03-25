@@ -12,15 +12,24 @@ class Program
         double I = W*Math.Pow(H,3)/12;    // inertia
 
         double length = 10;              // beam length
+
         double ratio = 0.5;             // roller position ratio
         double zF_s0 = ratio * length;   // roller position
+
+        double ratio_F = 0.7;
+        double zF = ratio_F*length; 
         
         double zF_s1 = length - zF_s0;          // force position
         double ext_load = 8E2;
 
-        double[] absolutePositions = new double[] {0, zF_s0, length}; // absolute position for the mathematical segment splitting
-    
-        int numtratti = 2;
+
+        double[] absolutePositions = new double[] {0, zF_s0, zF, length}; // absolute position for the mathematical segment splitting
+
+       /*  int numRows = 12;   // define rows of the matrix
+        int numCols = 12;   // define columns of the matrix
+     */
+        
+        int numtratti = 3;
         int dimMat = 6*numtratti;
 
         double[,] Matrix = new double[dimMat, dimMat];
@@ -28,12 +37,18 @@ class Program
         NonExtSupportType non_ext_support = NonExtSupportType.Hinge;
         ExtSupportType ext_support = ExtSupportType.Fixed;
         LoadType load = LoadType.Moment;
+        
+        //se voglio un estremo libero
+        //LoadType end = LoadType.Force;
+
+        ExtSupportType end_support = ExtSupportType.Fixed;
 
 
         List<List<double>> abs_conditions = non_ext_support.get_absolute_beam_equations(zF_s0, E, I, A);
         List<List<double>> rel_conditions = non_ext_support.get_relative_beam_equations(zF_s0, E, I, A);
         List<List<double>> ext_conditions = ext_support.get_extreme_beam_equations(0,E,I,A);
-        List<List<double>> load_conditions = load.get_extreme_load_equations(length,E,I,A);
+        List<List<double>> load_conditions = load.get_relative_load_equations(zF,E,I,A);
+        List<List<double>> end_conditions = end_support.get_extreme_beam_equations(length,E,I,A);
 
         double[] vector = load.get_vector(ext_load/(E*I));
 
@@ -50,10 +65,19 @@ class Program
 
         for(int i=0; i<load_conditions.Count; i++){
             for(int j=0; j<load_conditions[i].Count;j++){
-                Matrix[i+offset, j+6] = load_conditions[i][j]; 
+                Matrix[i+offset, j+6] = (-1)*load_conditions[i][j];
+                Matrix[i+offset, j+12] = load_conditions[i][j]; 
             }
         }
          offset += load_conditions.Count;
+
+        for(int i=0; i<end_conditions.Count; i++){
+            for(int j=0; j<end_conditions[i].Count;j++){
+                Matrix[i+offset, j+12] = end_conditions[i][j]; 
+            }
+        }
+         offset += end_conditions.Count;
+ 
 
         //Console.WriteLine(offset);
 
@@ -90,6 +114,63 @@ class Program
             Console.WriteLine();
         }
 
+
+/*         double[] row1 = get_V("V",0,E, I);
+
+        for (int i = 0; i < row1.GetLength(0); i++)
+        {
+            Console.Write($"{row1[i]} "); // Use scientific notation for clarity
+        }  */
+        
+   /*      // v(0) = 0
+        double[] row1 = { 0, 0, 0, 1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0 };
+        // w(0) = 0
+        double[] row2 = {0, 0, 0, 0, 0, -1/(E*A), 0, 0, 0, 0, 0, 0 };
+        // M(0) = 0
+        double[] row3 = { 0, 1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        // v(zF_s0) = 0
+        double[] row4 = { 1/(E*I)*Math.Pow(zF_s0,3)/6,  1/(E*I)*Math.Pow(zF_s0,2)/2, 1/(E*I)*zF_s0,  1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0 };
+        // Delta_w() = w_s1(0) - w_s0(zF_s0) = 0
+        double[] row5 = { 0, 0, 0, 0, -(-1/(E*A)) *zF_s0,  -(-1/(E*A)), 0, 0, 0, 0, 0, -1/(E*A) };
+        // Delta_phi() = phi_s1(0) - phi_s0(zF_s0) = 0 //erano sbagliati i segni
+        double[] row6 = { (1/(E*I))*Math.Pow(zF_s0,2)/2, (1/(E*I))*zF_s0, (1/(E*I)), 0, 0, 0, 0, 0,  -1/(E*I), 0, 0, 0 };
+        // Delta_v() = v_s1(0) - v_s0(zF_s0) = 0
+        double[] row7 = {(1/(E*I))*Math.Pow(zF_s0,3)/6, (1/(E*I))*Math.Pow(zF_s0,2)/2, (1/(E*I))*zF_s0, (1/(E*I)), 0, 0, 0, 0, 0,  -1/(E*I), 0, 0 };
+        // Delta_M() = M_s1(0) - M_s0(zF_s0) = 0
+        double[] row8 = { -(-zF_s0), -(-1), 0, 0, 0, 0, 0, -1, 0, 0, 0, 0 };
+        // Delta_N() = N_s1(0) - N_s0(zF_s0) = 0
+        double[] row9 = { 0, 0, 0, 0, -(-1), 0, 0, 0, 0, 0, -1, 0 };
+        // M(zF_s1) = 0
+        double[] row10 = {0, 0, 0, 0, 0, 0, -zF_s1, -1, 0, 0, 0, 0 };
+        // T(zF_s1) = F //NON CI VUOLE UN EI???
+        double[] row11 = {0, 0, 0, 0, 0, 0, -(1/(E*I)), 0, 0, 0, 0, 0 };
+        // N(zF_s1) = 0
+        double[] row12 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0 };
+
+        // Set rows collection for the matrix
+        List<double[]> rows = new List<double[]>
+        {
+            row1, row2, row3, row4, row5, row6, row7, row8, row9, row10, row11, row12
+        };
+
+        // define the vector
+        double[] vector = new double[]
+        {
+           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, force, 0
+        };
+
+        
+        // reshape the matrix from [][] to [,]
+        double[,] matrix = new double[numRows, numCols];
+        for (int i = 0; i < rows.Count; i++)
+        {
+            for (int j = 0; j < rows[i].Length; j++)
+            {
+                matrix[i, j] = rows[i][j];
+            }
+        } */
+        
+
         double[] solution = MatrixSolver.Solve(Matrix, vector);      // solve Ax = b
         
 
@@ -106,6 +187,38 @@ class Program
         PlotHelper.PlotBeamFunction(groups);
 
     }
+
+    /* public static double[] get_V(string type, double z_in, double E, double I){
+       
+    } */
+    
+    /*
+    -- old boundary_condition logic (absolute + relative all together --)
+    public static List<List<double>> boundary_conditions(SupportType support_type, double z_in, double E, double I){
+        List<List<double>> matrix = new List<List<double>>();
+
+        switch (support_type) {
+            case SupportType.Roller {
+                double[] cond1 = get_V("V", z_in, E, I);    //v(z_in)=0
+                double[] cond2 = get_V("V", z_in, E, I);    //delta_v(z_in)=0, devo vedere come aggiungere le condizioni relative
+                double[] cond3 = get_V("VI", z_in, E, I);   //delta_phi(z_in)
+                double[] cond4 = get_V("VII", z_in, E, I);   //delta_M
+                double[] cond5 = get_V("WI", z_in, E, I);   //delta_N
+                double[] cond6 = get_V("W", z_in, E, I);   //delta_W
+
+                matrix.Add(cond1.ToList());
+                matrix.Add(cond2.ToList());
+                matrix.Add(cond3.ToList());
+                matrix.Add(cond4.ToList());
+                matrix.Add(cond5.ToList());
+                matrix.Add(cond6.ToList());
+                break;
+            }
+            default: new List(new List());
+        }
+
+        return matrix;
+    }*/
     
 }
 
@@ -247,13 +360,23 @@ public static List<List<double>> get_extreme_load_equations(this LoadType load_t
         return load_equations;
     }
 
+    public static List<List<double>> get_relative_load_equations(this LoadType load_type, double z_in, double E, double I, double A) {
+        List<List<double>> load_equations = new List<List<double>>();
+
+        foreach (BeamEquationType eq_type in load_type.get_relative_load_equation_types()) {
+            load_equations.Add(eq_type.get_equation(z_in, E, I, A).ToList());
+        }
+
+        return load_equations;
+    }
+
 public static double[] get_vector(this LoadType load_type, double load) {
 
     return load_type switch{
         
-        LoadType.Force => [0, 0, 0, 0 ,-load ,0, 0, 0, 0, 0, 0, 0],
-        LoadType.Moment => [0, 0, 0, -load, 0 ,0, 0, 0, 0, 0, 0, 0],
-        _ =>[0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0]
+        LoadType.Force => [0, 0, 0, 0 ,load ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        LoadType.Moment => [0, 0, 0, load, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        _ =>[0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     };
 }
     
@@ -293,6 +416,30 @@ public static double[] get_vector(this LoadType load_type, double load) {
                 BeamEquationType.VII,
                 BeamEquationType.VIII,
                 BeamEquationType.WI
+                },
+            _ => new List<BeamEquationType>()
+            
+        };        
+    }
+
+    public static List<BeamEquationType> get_relative_load_equation_types(this LoadType load_type){
+        return load_type switch
+        {
+            LoadType.Force => new List<BeamEquationType> {
+                BeamEquationType.VII,
+                BeamEquationType.VIII,
+                BeamEquationType.WI,
+                BeamEquationType.V,
+                BeamEquationType.VI,
+                BeamEquationType.W
+                },
+            LoadType.Moment => new List<BeamEquationType> {
+                BeamEquationType.VII,
+                BeamEquationType.VIII,
+                BeamEquationType.WI,
+                BeamEquationType.V,
+                BeamEquationType.VI,
+                BeamEquationType.W
                 },
             _ => new List<BeamEquationType>()
             
