@@ -24,10 +24,6 @@ class Program
 
 
         double[] absolutePositions = new double[] {0, zF_s0, zF, length}; // absolute position for the mathematical segment splitting
-
-       /*  int numRows = 12;   // define rows of the matrix
-        int numCols = 12;   // define columns of the matrix
-     */
         
         int numtratti = 3;
         int dimMat = 6*numtratti;
@@ -114,61 +110,6 @@ class Program
             Console.WriteLine();
         }
 
-
-/*         double[] row1 = get_V("V",0,E, I);
-
-        for (int i = 0; i < row1.GetLength(0); i++)
-        {
-            Console.Write($"{row1[i]} "); // Use scientific notation for clarity
-        }  */
-        
-   /*      // v(0) = 0
-        double[] row1 = { 0, 0, 0, 1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0 };
-        // w(0) = 0
-        double[] row2 = {0, 0, 0, 0, 0, -1/(E*A), 0, 0, 0, 0, 0, 0 };
-        // M(0) = 0
-        double[] row3 = { 0, 1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        // v(zF_s0) = 0
-        double[] row4 = { 1/(E*I)*Math.Pow(zF_s0,3)/6,  1/(E*I)*Math.Pow(zF_s0,2)/2, 1/(E*I)*zF_s0,  1/(E*I), 0, 0, 0, 0, 0, 0, 0, 0 };
-        // Delta_w() = w_s1(0) - w_s0(zF_s0) = 0
-        double[] row5 = { 0, 0, 0, 0, -(-1/(E*A)) *zF_s0,  -(-1/(E*A)), 0, 0, 0, 0, 0, -1/(E*A) };
-        // Delta_phi() = phi_s1(0) - phi_s0(zF_s0) = 0 //erano sbagliati i segni
-        double[] row6 = { (1/(E*I))*Math.Pow(zF_s0,2)/2, (1/(E*I))*zF_s0, (1/(E*I)), 0, 0, 0, 0, 0,  -1/(E*I), 0, 0, 0 };
-        // Delta_v() = v_s1(0) - v_s0(zF_s0) = 0
-        double[] row7 = {(1/(E*I))*Math.Pow(zF_s0,3)/6, (1/(E*I))*Math.Pow(zF_s0,2)/2, (1/(E*I))*zF_s0, (1/(E*I)), 0, 0, 0, 0, 0,  -1/(E*I), 0, 0 };
-        // Delta_M() = M_s1(0) - M_s0(zF_s0) = 0
-        double[] row8 = { -(-zF_s0), -(-1), 0, 0, 0, 0, 0, -1, 0, 0, 0, 0 };
-        // Delta_N() = N_s1(0) - N_s0(zF_s0) = 0
-        double[] row9 = { 0, 0, 0, 0, -(-1), 0, 0, 0, 0, 0, -1, 0 };
-        // M(zF_s1) = 0
-        double[] row10 = {0, 0, 0, 0, 0, 0, -zF_s1, -1, 0, 0, 0, 0 };
-        // T(zF_s1) = F //NON CI VUOLE UN EI???
-        double[] row11 = {0, 0, 0, 0, 0, 0, -(1/(E*I)), 0, 0, 0, 0, 0 };
-        // N(zF_s1) = 0
-        double[] row12 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0 };
-
-        // Set rows collection for the matrix
-        List<double[]> rows = new List<double[]>
-        {
-            row1, row2, row3, row4, row5, row6, row7, row8, row9, row10, row11, row12
-        };
-
-        // define the vector
-        double[] vector = new double[]
-        {
-           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, force, 0
-        };
-
-        
-        // reshape the matrix from [][] to [,]
-        double[,] matrix = new double[numRows, numCols];
-        for (int i = 0; i < rows.Count; i++)
-        {
-            for (int j = 0; j < rows[i].Length; j++)
-            {
-                matrix[i, j] = rows[i][j];
-            }
-        } */
         
 
         double[] solution = MatrixSolver.Solve(Matrix, vector);      // solve Ax = b
@@ -188,38 +129,6 @@ class Program
 
     }
 
-    /* public static double[] get_V(string type, double z_in, double E, double I){
-       
-    } */
-    
-    /*
-    -- old boundary_condition logic (absolute + relative all together --)
-    public static List<List<double>> boundary_conditions(SupportType support_type, double z_in, double E, double I){
-        List<List<double>> matrix = new List<List<double>>();
-
-        switch (support_type) {
-            case SupportType.Roller {
-                double[] cond1 = get_V("V", z_in, E, I);    //v(z_in)=0
-                double[] cond2 = get_V("V", z_in, E, I);    //delta_v(z_in)=0, devo vedere come aggiungere le condizioni relative
-                double[] cond3 = get_V("VI", z_in, E, I);   //delta_phi(z_in)
-                double[] cond4 = get_V("VII", z_in, E, I);   //delta_M
-                double[] cond5 = get_V("WI", z_in, E, I);   //delta_N
-                double[] cond6 = get_V("W", z_in, E, I);   //delta_W
-
-                matrix.Add(cond1.ToList());
-                matrix.Add(cond2.ToList());
-                matrix.Add(cond3.ToList());
-                matrix.Add(cond4.ToList());
-                matrix.Add(cond5.ToList());
-                matrix.Add(cond6.ToList());
-                break;
-            }
-            default: new List(new List());
-        }
-
-        return matrix;
-    }*/
-    
 }
 
 
